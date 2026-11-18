@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shohedozzaman Basunia | 3D portfolio: ML and educational technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{--bg:#060912;--ink:#e9eefc;--soft:#9aa6c7;--glass:rgba(11,17,40,.66);--line:rgba(160,180,255,.2);--acc:#36e0ff;color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(1100px 700px at 72% 18%,#14204f 0,transparent 62%),radial-gradient(800px 600px at 10% 90%,#1a1037 0,transparent 60%),var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans",system-ui,sans-serif;overflow:hidden}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+.brand{position:fixed;left:24px;top:calc(18px + env(safe-area-inset-top,0px));z-index:5;font:600 1.05rem "Space Grotesk",sans-serif;letter-spacing:.01em;text-decoration:none}
+.brand i{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--acc);margin-right:9px;box-shadow:0 0 14px var(--acc);transition:background .6s,box-shadow .6s}
+.view{position:fixed;inset:0;z-index:2;display:none;align-items:center;padding:84px 6vw 120px;pointer-events:none}
+.view.on{display:flex;animation:fd .55s ease both}
+@keyframes fd{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.view>*{pointer-events:auto}
+.panel{max-width:560px;background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:26px;padding:34px 34px 30px}
+h1{font:600 clamp(2.5rem,6.4vw,5rem)/.98 "Space Grotesk",sans-serif;letter-spacing:-.035em;margin:0 0 18px}
+h2{font:600 clamp(1.9rem,4vw,2.8rem)/1.05 "Space Grotesk",sans-serif;letter-spacing:-.025em;margin:0 0 12px}
+p{margin:0 0 16px}
+.soft{color:var(--soft)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 24px;padding:0;list-style:none}
+.chips li{border:1px solid var(--line);border-radius:999px;padding:3px 13px;font-size:.85rem;color:var(--soft)}
+.btn{display:inline-block;padding:11px 22px;border-radius:12px;background:var(--acc);color:#04101a;font-weight:500;text-decoration:none;margin:0 10px 8px 0;transition:background .6s}
+.btn.g{background:none;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.scroll{max-height:calc(100svh - 215px);overflow:auto}
+.pap{padding:15px 0;border-top:1px solid var(--line)}
+.pap:first-child{border-top:0;padding-top:0}
+.pap b{display:block;font:500 1.05rem "Space Grotesk",sans-serif}
+.pap span{display:block;color:var(--acc);font-size:.85rem;transition:color .6s}
+.pap p{margin:2px 0 0;color:var(--soft);font-size:.94rem}
+.facts{list-style:none;margin:18px 0 0;padding:0}
+.facts li{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-top:1px solid var(--line);font-size:.95rem}
+.facts li span:first-child{color:var(--soft)}.facts li span:last-child{text-align:right}
+.mail{font:600 clamp(1.3rem,3.4vw,2rem) "Space Grotesk",sans-serif;text-decoration:none;color:var(--acc);word-break:break-all;display:block;margin:6px 0 22px}
+#vp{flex-direction:column;justify-content:center;align-items:stretch;text-align:center}
+#vp .top{pointer-events:auto}
+.deck{height:400px;perspective:1300px;display:flex;justify-content:center;align-items:center;touch-action:pan-y;cursor:grab;user-select:none}
+.deck:active{cursor:grabbing}
+.ring{position:relative;width:260px;height:340px;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.ring.d{transition:none}
+.card{position:absolute;inset:0;text-align:left;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:22px;padding:26px 24px;backface-visibility:hidden;opacity:.5;transition:opacity .4s,border-color .4s,box-shadow .4s;display:flex;flex-direction:column}
+.card.act{opacity:1;border-color:var(--acc);box-shadow:0 0 40px -8px var(--acc)}
+.card .t{font-size:.8rem;color:var(--acc);margin-bottom:10px;transition:color .6s}
+.card h3{font:600 1.55rem/1.1 "Space Grotesk",sans-serif;letter-spacing:-.02em;margin:0 0 12px}
+.card p{font-size:.94rem;color:var(--soft);margin:0}
+.ctl{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:8px}
+.ctl button{width:44px;height:44px;border-radius:50%;background:var(--glass);border:1px solid var(--line);color:var(--ink);font-size:1.1rem;cursor:pointer}
+#cnt{min-width:64px;font-size:.9rem;color:var(--soft)}
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;gap:4px;padding:6px;background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:999px}
+.dock a{text-decoration:none;padding:8px 16px;border-radius:999px;font-size:.92rem;color:var(--soft);transition:.25s}
+.dock a.on{background:var(--acc);color:#04101a;font-weight:500}
+#v-home{justify-content:space-between;gap:24px}
+.mapbox{width:min(480px,42vw);background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:26px;padding:16px 16px 18px}
+.mapbox .cap{margin:0 0 2px;font-size:.85rem;color:var(--soft)}
+#msvg{width:100%;height:auto;display:block}
+#msvg .e{stroke:var(--line);stroke-width:1.5;transition:stroke .3s}
+#msvg .e.on{stroke:var(--acc);stroke-width:2.2}
+#msvg g.n{cursor:pointer;outline:none}
+#msvg .ring{fill:rgba(6,9,18,.6);stroke:var(--ink);stroke-opacity:.55;stroke-width:1.5}
+#msvg g.n:focus-visible .ring{stroke:var(--acc);stroke-opacity:1}
+#msvg .dot{fill:var(--acc);transform-box:fill-box;transform-origin:center;transform:scale(0);transition:transform .35s cubic-bezier(.3,1.4,.5,1),fill .6s}
+#msvg g.n.on .dot{transform:scale(1)}#msvg g.n.near .dot{transform:scale(.45)}
+#msvg text{font:500 12.5px 'IBM Plex Sans',sans-serif;fill:var(--ink);paint-order:stroke;stroke:rgba(6,9,18,.9);stroke-width:4px}
+#mi{min-height:92px;padding:4px 4px 0}
+#mi h3{font:600 1.25rem 'Space Grotesk',sans-serif;margin:0 0 2px}
+#mi p{margin:0;font-size:.9rem;color:var(--soft)}
+#mi .cn{margin-top:6px;color:var(--acc);font-size:.82rem;transition:color .6s}
+@media (max-width:860px){
+ #v-home{pointer-events:auto;overflow:auto;flex-direction:column;align-items:stretch;justify-content:flex-start;padding:64px 14px 96px}
+ .mapbox{width:100%;margin-top:4px}
+ .view{align-items:flex-end;padding:70px 14px 96px}
+ .panel{padding:22px 20px;max-width:none;width:100%;border-radius:22px}
+ h1{font-size:2.4rem}.scroll{max-height:46svh}
+ #vp{align-items:stretch;padding-bottom:90px}.deck{height:380px}
+ .dock a{padding:8px 11px;font-size:.84rem}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<a class="brand" href="#home"><i></i>Shakib Basunia</a>
+
+<section class="view" id="v-home"><div class="panel">
+  <h1>Shohedozzaman Basunia</h1>
+  <p>Researcher and developer in applied machine learning and educational technology. I build learning systems for Bangladeshi classrooms, and models that explain their predictions.</p>
+  <ul class="chips"><li>Federated learning</li><li>Knowledge tracing</li><li>NLP</li><li>Edge AI</li><li>AR learning</li></ul>
+  <a class="btn" href="#projects">View projects</a><a class="btn g" href="#research">Read research</a>
+</div>
+<div class="mapbox"><p class="cap">Research map. Hover or tap a topic to see the work and what it connects to.</p>
+<svg id="msvg" viewBox="0 0 480 400" role="group" aria-label="Map of research topics"></svg>
+<div id="mi" aria-live="polite"></div></div></section>
+
+<section class="view" id="v-projects">
+  <div class="top" style="width:100%">
+    <div style="text-align:center"><h2>Projects</h2><p class="soft">Drag, swipe or use the arrows to turn the deck.</p></div>
+    <div class="deck" id="deck"><div class="ring" id="ring">
+      <article class="card"><div class="t">Augmented reality</div><h3>EduX</h3><p>A WebAR learning platform that brings NCTB Class 1 to 5 topics onto a phone screen as objects a child can look at from every side.</p></article>
+      <article class="card"><div class="t">Inclusive learning</div><h3>LearnIt</h3><p>Personalized lessons for primary students in Bangladesh, adapted to each child’s pace.</p></article>
+      <article class="card"><div class="t">Explainable AI</div><h3>XKT-GenPath</h3><p>Knowledge tracing with generative path planning. It tracks what a student knows and says why it picked the next lesson.</p></article>
+      <article class="card"><div class="t">Edge AI, thesis</div><h3>Plastic waste classifier</h3><p>A real-time classification framework for plastic waste, running on a rover prototype.</p></article>
+      <article class="card"><div class="t">Accessibility</div><h3>Bangla Braille tool</h3><p>A learning app that helps visually impaired students practice Bangla Braille. In progress.</p></article>
+      <article class="card"><div class="t">Disaster management</div><h3>SROT (স্রোত)</h3><p>A flood and disaster app with a full interface design for communities in flood-prone areas.</p></article>
+    </div></div>
+    <div class="ctl"><button id="pv" aria-label="Previous project">&#8592;</button><span id="cnt"></span><button id="nx" aria-label="Next project">&#8594;</button></div>
+  </div>
+</section>
+
+<section class="view" id="v-research"><div class="panel"><h2>Research</h2><div class="scroll">
+  <div class="pap"><b>Student confusion in online forums</b><span>COMPAS 2026, IEEE, University of Dhaka</span><p>Confusion detection with NLP and deep learning.</p></div>
+  <div class="pap"><b>Voices of the July</b><span>IIUC conference, oral presentation</span><p>A 10 minute talk with 3 minutes of questions.</p></div>
+  <div class="pap"><b>DNS spoofing and cache poisoning</b><span>Network security</span><p>A leakage-aware stacked ensemble, tested on CICIDS2017 and simulated DNS data.</p></div>
+  <div class="pap"><b>Federated dropout prediction</b><span>Federated learning</span><p>FedProx, differential privacy and non-IID data on OULAD.</p></div>
+  <div class="pap"><b>Transformer weather prediction</b><span>Climate modeling</span><p>Explainable forecasts that support crop cultivation planning.</p></div>
+  <div class="pap"><b>Educational methods and technological transformation</b><span>Book, co-author</span><p>A published volume on how technology changes teaching.</p></div>
+</div></div></section>
+
+<section class="view" id="v-about"><div class="panel"><h2>About</h2>
+  <p>I finished the Bachelor of Science in Educational Technology and Engineering at the University of Frontier Technology, Bangladesh, in the EDTE 2020-21 batch.</p>
+  <p class="soft">My papers cover education, climate modeling, cybersecurity and federated learning. I am applying for graduate scholarships and teaching posts.</p>
+  <ul class="facts"><li><span>Degree</span><span>BSc, Educational Technology and Engineering</span></li><li><span>University</span><span>UFTB</span></li><li><span>Languages</span><span>Bangla, English</span></li></ul>
+</div></section>
+
+<section class="view" id="v-contact"><div class="panel"><h2>Let’s talk</h2>
+  <p class="soft">Research collaboration, graduate study or teaching roles.</p>
+  <a class="mail" href="mailto:your-email@example.com">your-email@example.com</a>
+  <a class="btn g" href="https://github.com/">GitHub</a><a class="btn g" href="https://www.linkedin.com/">LinkedIn</a>
+</div></section>
+
+<nav class="dock" id="dock" aria-label="Sections">
+  <a href="#home">Home</a><a href="#projects">Projects</a><a href="#research">Research</a><a href="#about">About</a><a href="#contact">Contact</a>
+</nav>
+
+<script>
+var RT={home:["#36e0ff",.4,0,-2.2,.95],projects:["#a78bfa",0,1.7,-4.5,.7],research:["#ffb454",-2.6,0,-1,.9],about:["#4ade80",2.6,-.2,-1,.9],contact:["#ff5d8f",0,0,-1,1.15]};
+var cur="home",mx=0,my=0,GL=null;
+function route(){var r=(location.hash||"#home").slice(1);if(!RT[r])r="home";cur=r;
+ document.documentElement.style.setProperty("--acc",RT[r][0]);
+ [].forEach.call(document.querySelectorAll(".view"),function(v){v.classList.toggle("on",v.id==="v-"+r)});
+ [].forEach.call(document.querySelectorAll("#dock a"),function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+r)});
+ if(GL)GL.tc.set(RT[r][0])}
+addEventListener("hashchange",route);
+
+(function(){var cv=document.getElementById("gl"),R;
+ try{R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true})}catch(e){return}
+ var S=new THREE.Scene(),C=new THREE.PerspectiveCamera(50,1,.1,100),G=new THREE.Group(),P=[],L=[],i,j;
+ C.position.z=7;S.add(G);
+ for(i=0;i<110;i++){var u=Math.random()*2-1,a=Math.random()*6.283,r=Math.sqrt(1-u*u);P.push(new THREE.Vector3(r*Math.cos(a),u,r*Math.sin(a)).multiplyScalar(1.6+Math.random()*.8))}
+ for(i=0;i<P.length;i++)for(j=i+1;j<P.length;j++)if(P[i].distanceTo(P[j])<1.05){L.push(P[i],P[j])}
+ var add=additive;function additive(m){m.transparent=true;m.blending=THREE.AdditiveBlending;m.depthWrite=false;return m}
+ var pm=add(new THREE.PointsMaterial({size:.1,color:0x36e0ff,opacity:.95})),lm=add(new THREE.LineBasicMaterial({color:0x36e0ff,opacity:.22})),
+ cm=add(new THREE.MeshBasicMaterial({color:0x36e0ff,wireframe:true,opacity:.35})),rm=add(new THREE.MeshBasicMaterial({color:0x36e0ff,opacity:.5}));
+ G.add(new THREE.Points(new THREE.BufferGeometry().setFromPoints(P),pm));
+ G.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(L),lm));
+ var core=new THREE.Mesh(new THREE.IcosahedronGeometry(.95,1),cm);G.add(core);
+ var r1=new THREE.Mesh(new THREE.TorusGeometry(2.9,.012,8,200),rm),r2=new THREE.Mesh(new THREE.TorusGeometry(3.3,.01,8,200),rm);
+ r1.rotation.x=1.2;r2.rotation.set(.4,.9,0);G.add(r1,r2);
+ var mats=[pm,lm,cm,rm],tc=new THREE.Color(0x36e0ff);GL={tc:tc};
+ function fit(){var w=innerWidth,h=innerHeight;R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix()}
+ fit();addEventListener("resize",fit);
+ addEventListener("pointermove",function(e){mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+ var calm=matchMedia("(prefers-reduced-motion:reduce)").matches,t=0,s=1;
+ function tick(){t+=calm?0:.01;var m=innerWidth<860,k=RT[cur],tx=m?0:k[1],ty=m?(cur==="projects"?2.2:1.5):k[2],tz=m?k[3]-1.2:k[3],ts=m?k[4]*.8:k[4];
+  G.position.x+=(tx-G.position.x)*.05;G.position.y+=(ty-G.position.y)*.05;G.position.z+=(tz-G.position.z)*.05;s+=(ts-s)*.05;G.scale.setScalar(s);
+  G.rotation.y+=((t*.25+mx*1.2)-G.rotation.y)*.06;G.rotation.x+=((my*.7)-G.rotation.x)*.06;
+  core.rotation.y=-t*.8;r1.rotation.z=t*.4;r2.rotation.z=-t*.3;pm.size=.1+Math.sin(t*3)*.015;
+  mats.forEach(function(q){q.color.lerp(tc,.05)});R.render(S,C);requestAnimationFrame(tick)}
+ tick()})();
+route();
+
+var ring=document.getElementById("ring"),deck=document.getElementById("deck"),cards=[].slice.call(ring.children),n=cards.length,st=360/n,rot=0,Rd,x0,r0,dg=false;
+function lay(){var w=innerWidth<860?220:260;Rd=Math.round(w/2/Math.tan(Math.PI/n))+60;ring.style.width=w+"px";
+ cards.forEach(function(c,k){c.style.transform="rotateY("+k*st+"deg) translateZ("+Rd+"px)"});app()}
+function app(){ring.style.transform="translateZ(-"+Rd+"px) rotateY("+-rot+"deg)";var a=((Math.round(rot/st)%n)+n)%n;
+ cards.forEach(function(c,k){c.classList.toggle("act",k===a)});document.getElementById("cnt").textContent=(a+1)+" of "+n}
+function go(d){rot=(Math.round(rot/st)+d)*st;app()}
+document.getElementById("pv").onclick=function(){go(-1)};document.getElementById("nx").onclick=function(){go(1)};
+deck.addEventListener("pointerdown",function(e){dg=true;x0=e.clientX;r0=rot;ring.classList.add("d");deck.setPointerCapture(e.pointerId)});
+deck.addEventListener("pointermove",function(e){if(!dg)return;rot=r0-(e.clientX-x0)*.35;app()});
+function up(){if(!dg)return;dg=false;ring.classList.remove("d");rot=Math.round(rot/st)*st;app()}
+deck.addEventListener("pointerup",up);deck.addEventListener("pointercancel",up);
+addEventListener("keydown",function(e){if(cur!=="projects")return;if(e.key==="ArrowRight")go(1);if(e.key==="ArrowLeft")go(-1)});
+cards.forEach(function(c,k){c.addEventListener("click",function(){var a=Math.round(rot/st),cu=((a%n)+n)%n,d=k-cu;if(d>n/2)d-=n;if(d<-n/2)d+=n;if(d)go(d)})});
+addEventListener("resize",lay);lay();
+
+var MT=[
+{id:"kt",l:"Knowledge tracing",x:100,y:90,t:"Models that follow what a student knows over time. XKT-GenPath adds explanations and a generated study path."},
+{id:"fl",l:"Federated learning",x:360,y:70,t:"Dropout prediction on OULAD that trains across institutions without sharing student records."},
+{id:"nl",l:"Language models",x:415,y:200,t:"Confusion detection in forum posts, and LLM cyber-defense work with Mahfuza Maisha."},
+{id:"ar",l:"Augmented reality",x:70,y:225,t:"EduX brings NCTB Class 1 to 5 lessons into WebAR on ordinary phones."},
+{id:"ed",l:"Edge AI",x:235,y:325,t:"The plastic waste classifier runs on a rover, so sorting happens on the device."},
+{id:"sc",l:"Security",x:395,y:320,t:"A stacked ensemble that detects DNS spoofing and cache poisoning without data leakage."},
+{id:"cl",l:"Climate and XAI",x:240,y:165,t:"Transformer weather prediction with explanations that planners and farmers can read."},
+{id:"ac",l:"Accessibility",x:80,y:335,t:"A Bangla Braille tool for visually impaired students, and the inclusive LearnIt platform."}];
+var ME=[["kt","cl"],["kt","ar"],["kt","fl"],["fl","nl"],["fl","cl"],["nl","sc"],["ar","ac"],["ar","ed"],["ed","sc"],["cl","ed"],["cl","nl"],["ac","ed"]];
+var ms=document.getElementById("msvg"),NS="http://www.w3.org/2000/svg",mb={},mi={},mauto;
+function mk(n,a){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e}
+MT.forEach(function(t){mi[t.id]=t});
+ME.forEach(function(p){var a=mi[p[0]],b=mi[p[1]],l=mk("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,"class":"e"});l.dataset.a=a.id;l.dataset.b=b.id;ms.appendChild(l)});
+MT.forEach(function(t){var g=mk("g",{"class":"n",tabindex:0,role:"button","aria-label":t.l,transform:"translate("+t.x+","+t.y+")"});
+ g.appendChild(mk("circle",{r:16,"class":"ring"}));g.appendChild(mk("circle",{r:9,"class":"dot"}));
+ var tx=mk("text",{y:33,"text-anchor":"middle"});tx.textContent=t.l;g.appendChild(tx);ms.appendChild(g);mb[t.id]=g;
+ ["mouseenter","focus","click"].forEach(function(ev){g.addEventListener(ev,function(){mpick(t.id);clearInterval(mauto)})})});
+function mpick(id){var t=mi[id],near={},names=[];
+ ms.querySelectorAll(".e").forEach(function(l){var on=l.dataset.a===id||l.dataset.b===id;l.classList.toggle("on",on);if(on){var o=l.dataset.a===id?l.dataset.b:l.dataset.a;near[o]=1;names.push(mi[o].l)}});
+ for(var k in mb){mb[k].classList.toggle("on",k===id);mb[k].classList.toggle("near",k!==id&&!!near[k])}
+ document.getElementById("mi").innerHTML="<h3>"+t.l+"</h3><p>"+t.t+"</p><div class=\"cn\">Connected: "+names.join(", ")+"</div>"}
+mpick("kt");
+if(!matchMedia("(prefers-reduced-motion:reduce)").matches){var mo=["kt","cl","fl","nl","sc","ed","ar","ac"],mn=0;mauto=setInterval(function(){if(cur!=="home")return;mn=(mn+1)%mo.length;mpick(mo[mn])},3800)}
+</script>
+</body>
+</html>
